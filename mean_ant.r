@@ -19,9 +19,9 @@ nitems <- 15 # number of items in the short scale
 iter <- 60   # number of iterations
 ants <- 150  # number of iterations (start with a iter/ants ratio of 2/3)
 evaporation <- 0.90
-
+pheromone_global <- NULL
 #FUNCTION START:
-antcolony <- function(evaporation, items.ppvt, nitems, iter, ants, catincrease=TRUE, catpheromone=FALSE) {
+antcolony <- function(evaporation, items.ppvt, nitems, iter, ants, catincrease=TRUE, catpheromone=FALSE, savepheromone = TRUE) {
                                
   best.pheromone <- 0
   best.so.far.pheromone <- 0
@@ -71,6 +71,7 @@ antcolony <- function(evaporation, items.ppvt, nitems, iter, ants, catincrease=T
       select.indicator <- is.element(item.vector, selected.items)
       notselect.indicator <- (select.indicator == FALSE)
       pheromone <- map_dbl(items, mean) %>% mean()
+      if(savepheromone)pheromone_global <<- c(pheromone_global, pheromone)
       if(catpheromone)cat(pheromone)
       if(catpheromone)cat("\n")
         
@@ -121,3 +122,7 @@ antcolony <- function(evaporation, items.ppvt, nitems, iter, ants, catincrease=T
 
 # run the function
 short <- antcolony(evaporation, items.ppvt, nitems, iter, ants)
+short <- names(items.ppvt)[short]
+short_real <- map_dbl(items.ppvt, mean) %>% sort() %>% .[86:100] %>% names() 
+short_real_value <- map_dbl(items.ppvt[short_real], mean) %>% mean()
+short_value <- map_dbl(items.ppvt[short], mean) %>% mean()
